@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: make
+
+      - name: Check
+        run: make check
+
+      - name: Staged install
+        run: |
+          make install DESTDIR="$RUNNER_TEMP/run-nvidia-root" PREFIX=/usr
+          test -x "$RUNNER_TEMP/run-nvidia-root/usr/bin/run-nvidia"
+          test -f "$RUNNER_TEMP/run-nvidia-root/usr/share/man/man1/run-nvidia.1"
+          "$RUNNER_TEMP/run-nvidia-root/usr/bin/run-nvidia" --version

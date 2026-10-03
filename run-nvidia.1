@@ -1,0 +1,64 @@
+.TH RUN-NVIDIA 1 "October 2026" "run-nvidia" "User Commands"
+.SH NAME
+run-nvidia \- run a command with NVIDIA PRIME Render Offload
+.SH SYNOPSIS
+.B run-nvidia
+.RI [ -- ] " command " [ args... ]
+.br
+.B run-nvidia
+.RB [ -h | --help ]
+.br
+.B run-nvidia
+.RB [ -V | --version ]
+.SH DESCRIPTION
+.B run-nvidia
+executes a command after setting the environment variables commonly used for
+NVIDIA PRIME Render Offload:
+.PP
+.nf
+__NV_PRIME_RENDER_OFFLOAD=1
+__GLX_VENDOR_LIBRARY_NAME=nvidia
+__VK_LAYER_NV_optimus=NVIDIA_only
+.fi
+.PP
+The wrapper then replaces itself with the requested command using
+.BR execvp (3).
+.SH OPTIONS
+.TP
+.BR -h ", " --help
+Show usage information and exit.
+.TP
+.BR -V ", " --version
+Show version information and exit.
+.TP
+.B --
+Stop option parsing and treat the next argument as the command.
+.SH EXAMPLES
+Run Firefox using the NVIDIA GPU:
+.PP
+.nf
+run-nvidia firefox
+.fi
+.PP
+Inspect the OpenGL renderer:
+.PP
+.nf
+run-nvidia glxinfo -B
+.fi
+.PP
+Launch a Vulkan diagnostic tool:
+.PP
+.nf
+run-nvidia vulkaninfo
+.fi
+.SH EXIT STATUS
+When the requested command starts successfully,
+.B run-nvidia
+is replaced by that command, so the command's own exit status is observed.
+If setup fails, run-nvidia exits with status 1. Invalid usage returns 2.
+A missing command returns 127; other execution failures return 126.
+.SH REQUIREMENTS
+A correctly installed NVIDIA driver and working PRIME Render Offload setup are
+required for GPU offloading to function.
+.SH LICENSE
+MIT License.
